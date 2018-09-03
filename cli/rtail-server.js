@@ -94,8 +94,9 @@ socket.on('message', function (data, remote) {
     type: typeof data.content
   }
 
-  // limit backlog to 100 lines
-  streams[data.id].length >= 100 && streams[data.id].shift()
+  // limit backlog to lines set by envvar RTAIL_NUMBER_OF_LINES, else default to 5000
+  const numberOfLines = process.env.RTAIL_NUMBER_OF_LINES && parseInt(process.env.RTAIL_NUMBER_OF_LINES,10) > 0 ? parseInt(process.env.RTAIL_NUMBER_OF_LINES,10) : 5000;
+  streams[data.id].length >= numberOfLines && streams[data.id].shift()
   streams[data.id].push(message)
 
   debug(JSON.stringify(message))
